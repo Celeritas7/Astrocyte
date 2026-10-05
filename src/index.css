@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/* Design tokens — see README "Tokens". Violet = the instrument. Amber = him. Everything else grey. */
+@theme {
+  --color-bg: #0A0A0F;
+  --color-panel: #111118;
+  --color-line: #1C1C25;
+  --color-line-2: #2A2A36;
+  --color-dendrite: #2E2E3C;
+  --color-ink-1: #ECECF1;
+  --color-ink-2: #A0A0AE;
+  --color-ink-3: #6E6E7E;
+  --color-ink-4: #3A3A47;
+  --color-violet: #9B4FD1;
+  --color-violet-ink: #B98BE6;
+  --color-amber: #E0A458;
+
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html, body { background: var(--color-bg); }
+  body { -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; }
+}
+
+@layer components {
+  /* Mono label: every number, axis and section label */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .partial { background: linear-gradient(135deg, var(--color-violet) 50%, #15151C 50%); }
+}
+
+/* ---------- Motion: every effect is data-driven; all of it is removed under reduced motion ---------- */
+.soma-pulse { animation: soma 2.4s ease-out infinite; }
+@keyframes soma { 0% { box-shadow: 0 0 0 0 rgb(155 79 209 / .5); } 100% { box-shadow: 0 0 0 10px rgb(155 79 209 / 0); } }
+
+.flow {
+  fill: none; stroke: var(--color-violet-ink); stroke-width: 1.6; stroke-linecap: round;
+  stroke-dasharray: 5 95; stroke-dashoffset: 100; animation: flow 3s linear infinite;
+}
+.flow-edge { stroke: var(--color-ink-1); stroke-dasharray: 3 97; }
+.flow-pace { stroke: var(--color-ink-2); stroke-width: 1.5; stroke-dasharray: 3 97; animation-duration: 7s; }
+@keyframes flow { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+
+.ring-svg { fill: none; stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: ring 2.4s ease-out infinite; }
+.ring-html { position: absolute; inset: -1px; border-radius: 9999px; border: 1px solid currentColor; animation: ring 2.8s ease-out infinite; }
+@keyframes ring { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(3.2); opacity: 0; } }
+
+.spin-dash { animation: dash 2.8s linear infinite; }
+@keyframes dash { to { stroke-dashoffset: -8; } }
+
+.raster { animation: raster 16s linear infinite; }
+@keyframes raster { to { transform: translateX(-350px); } }
+
+.edge-sweep {
+  position: absolute; top: 0; left: 0; height: 1px; width: 90px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--color-violet-ink), transparent);
+  animation: sweep 3.2s linear infinite;
+}
+.save-sweep {
+  position: absolute; inset: 0 auto 0 0; width: 70px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / .35), transparent);
+  animation: sweep 1.6s linear infinite;
+}
+@keyframes sweep { from { transform: translateX(-90px); } to { transform: translateX(520px); } }
+
+.travel {
+  position: absolute; top: 50%; margin-top: -2.5px; width: 5px; height: 5px; border-radius: 9999px;
+  background: var(--color-ink-1); box-shadow: 0 0 6px 1px var(--color-violet-ink);
+  animation: travel 3.2s linear infinite backwards;
+}
+@keyframes travel { 0% { left: 0; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { left: calc(100% - 5px); opacity: 0; } }
+
+.today-ring { position: absolute; inset: -3px; border: 1px solid var(--color-violet-ink); pointer-events: none; animation: todayring 2.4s ease-out infinite; }
+@keyframes todayring { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(1.3); } }
+
+.lapse { position: absolute; inset: 0; background: var(--color-bg); animation: lapse 2.8s ease-in-out infinite; }
+@keyframes lapse { 0%, 100% { opacity: 0; } 50% { opacity: .65; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .signal { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
