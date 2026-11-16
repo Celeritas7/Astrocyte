@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { HabitExamples } from './HabitExamples';
 import './habits.css';
+import { ScreenOffDashboard } from '../components/ScreenOffDashboard';
 import { HabitCalendar } from '../components/HabitCalendar';
 import { HabitPlan, type Plan } from '../components/HabitPlan';
 
@@ -79,7 +80,10 @@ export function Habits() {
     {importMessage && <p role="status">{importMessage}</p>}
     <div className="habit-row"><button onClick={() => add('making')}>+ Make a habit</button><button onClick={() => add('breaking')}>+ Break a habit</button></div>
     <div className="habit-view-switch" role="group" aria-label="Habit views">{([['plan','Program'],['check','Check-in'],['print','Print sheet']] as const).map(([key,label])=><button key={key} aria-pressed={view===key} onClick={()=>setView(key)}>{label}</button>)}</div>
-    {view === 'plan' && <section className="habit-program"><div className="habit-plan-controls"><label className="habit-field">Plan start<input type="date" value={plan.start} onChange={e=>update({plan:{...plan,start:e.target.value}})}/></label><label className="habit-field">Plan length<select value={plan.duration} onChange={e=>update({plan:{...plan,duration:Number(e.target.value)}})}>{[7,14,21,28].map(n=><option key={n} value={n}>{n} days</option>)}</select></label><label className="habit-check"><input type="checkbox" checked={plan.weekdaysOnly} onChange={e=>update({plan:{...plan,weekdaysOnly:e.target.checked}})}/>Weekdays only</label></div>
+    {view === 'plan' && habit.office && habit.kind === 'making' && <ScreenOffDashboard title={habit.name} date={today()} entry={habit.entries[today()] ?? {status:'',early:'',note:''}} completed={Object.values(habit.entries).filter(e=>e.status==='Screen off confirmed').length} disabled={loaded.blocked}
+      onRecord={patch=>{const d=today();update({entries:{...habit.entries,[d]:{...(habit.entries[d] ?? {status:'',early:'',note:''}),...patch}}});}}
+      onCalendar={()=>document.getElementById('habit-program-calendar')?.scrollIntoView({behavior:'smooth',block:'start'})} onPrint={()=>setView('print')}/>}
+    {view === 'plan' && <section id="habit-program-calendar" className="habit-program"><div className="habit-plan-controls"><label className="habit-field">Plan start<input type="date" value={plan.start} onChange={e=>update({plan:{...plan,start:e.target.value}})}/></label><label className="habit-field">Plan length<select value={plan.duration} onChange={e=>update({plan:{...plan,duration:Number(e.target.value)}})}>{[7,14,21,28].map(n=><option key={n} value={n}>{n} days</option>)}</select></label><label className="habit-check"><input type="checkbox" checked={plan.weekdaysOnly} onChange={e=>update({plan:{...plan,weekdaysOnly:e.target.checked}})}/>Weekdays only</label></div>
     {!plan.start && <div className="habit-start"><span><b>Ready to begin?</b> Start today, or choose another date above.</span><button onClick={()=>update({plan:{...plan,start:today()}})}>Start today</button></div>}
     <HabitPlan plan={plan} title={habit.name} action={habit.action} kind={habit.kind} entries={habit.entries} today={today()} onSelect={d=>{setDate(d);setView('check');}}/>
     </section>}
@@ -88,7 +92,7 @@ export function Habits() {
       <p><strong>Trigger</strong><br/>{habit.trigger || 'Choose when to act.'}</p><p><strong>{habit.kind === 'breaking' ? 'Replacement action' : 'Action'}</strong><br/>{habit.action || 'Choose a small, specific action.'}</p>
       {habit.suggestion && <p className="habit-tip"><strong>{habit.office ? '30-minute wind-down' : 'Suggestion'}</strong><br/>{habit.suggestion}</p>}
       <button onClick={() => setEditing(!editing)} aria-expanded={editing}>{editing ? 'Close editor' : 'Edit habit / printable name'}</button>
-      {editing && <div className="habit-editor">{(['name','alias','issue','trigger','action','suggestion'] as const).map(k => <label className="habit-field" key={k}>{({name:'Habit name',alias:'Printable alias',issue:'Issue',trigger:'Trigger',action:'Action / replacement',suggestion:'Suggestion'})[k]}<textarea maxLength={700} rows={k === 'name' || k === 'alias' ? 1 : 3} value={habit[k]} onChange={e => update({ [k]: e.target.value })}/></label>)}</div>}
+      {editing && <div className="habit-editor"><label className="habit-check"><input type="checkbox" checked={habit.office} onChange={e=>update({office:e.target.checked})}/>Use screen-off dashboard and check-in controls</label>{(['name','alias','issue','trigger','action','suggestion'] as const).map(k => <label className="habit-field" key={k}>{({name:'Habit name',alias:'Printable alias',issue:'Issue',trigger:'Trigger',action:'Action / replacement',suggestion:'Suggestion'})[k]}<textarea maxLength={700} rows={k === 'name' || k === 'alias' ? 1 : 3} value={habit[k]} onChange={e => update({ [k]: e.target.value })}/></label>)}</div>}
     </details>
     <section hidden={view !== 'check'} className="habit-card"><h2>Daily check-in</h2><label className="habit-field">Date<input type="date" value={date} max={today()} onChange={e => { if(e.target.value) setDate(e.target.value); }}/></label>
       <div className="habit-statuses">{statuses(habit).map(s => <button key={s} aria-pressed={entry.status === s} className={entry.status === s ? 'selected' : ''} onClick={() => record({ status: s })}>{s}</button>)}</div>
