@@ -28,3 +28,19 @@
   .orientation-landscape .paper-review{margin-top:8px}
   .orientation-landscape .routine-calendar-scroll .routine-day,.orientation-landscape .routine-placeholder{min-height:24mm}
 }
+
+/* Checklist-first output: spend the page on date boxes, not instructions. */
+.minimal-checklist .paper-kicker,.minimal-checklist .print-calendar>p{display:none}
+.minimal-checklist .habit-paper>h1{font-size:22px;margin:0 0 6px;line-height:1.2}
+.minimal-checklist .print-calendar h2{font-size:17px;margin:0 0 10px}
+.minimal-checklist .calendar-date{min-height:90px}
+.minimal-checklist .calendar-mark{width:28px;height:28px}
+@media print{
+ .minimal-checklist .habit-paper>h1{font-size:18px;margin:0 0 3mm}
+ .minimal-checklist .print-calendar h2{font-size:13px;margin:0 0 3mm}
+ .minimal-checklist .calendar-weekday{padding:2mm 1mm}
+ .minimal-checklist.orientation-landscape .calendar-date{min-height:24mm}
+ .minimal-checklist.orientation-portrait .calendar-date{min-height:34mm}
+ .minimal-checklist .calendar-mark{width:7mm;height:7mm}
+ .minimal-checklist .calendar-writing-space{min-height:8mm}
+}
