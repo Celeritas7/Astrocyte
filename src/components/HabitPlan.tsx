@@ -7,6 +7,16 @@ export function planDays(plan: Plan): PlanDay[] {
     return { number: i + 1, date: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`, active: !plan.weekdaysOnly || (d.getDay() !== 0 && d.getDay() !== 6) };
   });
 }
+/** Pad partial weeks so weekdays retain their calendar columns. */
+export function planWeeks(plan: Plan): (PlanDay | null)[][] {
+  const days = planDays(plan);
+  const [y,m,d] = (plan.start || '2000-01-03').split('-').map(Number);
+  const offset = (new Date(y,m-1,d,12).getDay()+6)%7;
+  const cells: (PlanDay | null)[] = [...Array(offset).fill(null), ...days];
+  while (cells.length % 7) cells.push(null);
+  return Array.from({length:cells.length/7},(_,i)=>cells.slice(i*7,i*7+7));
+}
+const WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const successes = new Set(['Full', 'Screen off confirmed', 'Resisted', 'Replacement used']);
 export function HabitPlan({plan, title, action, kind, entries, today, onSelect, printable = false}: {
   plan: Plan; title: string; action: string; kind: 'making' | 'breaking'; entries: Record<string, {status: string}>;
@@ -20,9 +30,11 @@ export function HabitPlan({plan, title, action, kind, entries, today, onSelect, 
     <div className="routine-heading"><div><div className="routine-kicker">{kind === 'making' ? 'MAKE A HABIT' : 'BREAK A HABIT'}</div><h2>{title}</h2><p>{plan.start ? `${plan.start} → ${days[days.length-1]?.date}` : 'Not started yet. Choose a start date to begin.'}</p></div><span className="routine-count">{done}/{active.length} done</span></div>
     {!printable && action && <p className="routine-guidance">{action}</p>}
     <div className="routine-track" role="progressbar" aria-label="Completed planned days" aria-valuenow={done} aria-valuemin={0} aria-valuemax={active.length || 1}>{days.map(d => <span key={d.number} className={complete(d) ? 'complete' : !d.active ? 'off' : ''}/>)}<b>{done}/{active.length}</b></div>
-    {Array.from({length:Math.ceil(days.length/7)},(_,w) => {
-      const week=days.slice(w*7,w*7+7); const available=week.filter(d=>active.includes(d));
-      return <section className="routine-week" key={w} aria-label={`Week ${w+1}`}><header><h3>Week {w+1}</h3><span>{['Notice the cue','Repeat the action','Review what helps','Keep it practical'][w]}</span><b>{available.filter(complete).length}/{available.length} done</b></header><div className="routine-grid">{week.map(d => {
+    <div className="routine-calendar-scroll">
+    {planWeeks(plan).map((week,w) => {
+      const available=week.filter((d): d is PlanDay => d !== null && active.includes(d));
+      return <section className="routine-week" key={w} aria-label={`Week ${w+1}`}><header><h3>Calendar week {w+1}</h3><b>{available.filter(complete).length}/{available.length} done</b></header><div className="routine-grid">{WEEKDAYS.map(day=><div className="routine-weekday" key={day}>{day}</div>)}{week.map((d,column) => {
+        if (!d) return <div key={`empty-${column}`} className="routine-placeholder" aria-hidden="true"/>;
         const status = plan.start ? entries[d.date]?.status : '';
         const future = !!plan.start && d.date > today;
         const content = <><strong className="routine-number">{String(d.number).padStart(2,'0')}</strong><span className="routine-date">{plan.start ? d.date.slice(5) : 'Day '+d.number}</span><span className="routine-outcome">{status || (!d.active ? 'Rest' : future ? 'Upcoming' : plan.start ? 'Not recorded' : 'Not started')}</span><span aria-hidden="true" className={`routine-circle${complete(d) ? ' checked' : ''}`}>{complete(d) ? '✓' : status === 'Lapse' || status === 'Missed' ? '–' : ''}</span></>;
@@ -30,6 +42,8 @@ export function HabitPlan({plan, title, action, kind, entries, today, onSelect, 
         return printable ? <div className={cls} key={d.number}>{content}</div> : <button type="button" className={cls} key={d.number} disabled={!plan.start || future} onClick={()=>onSelect?.(d.date)} aria-label={`Day ${d.number}, ${plan.start ? d.date : 'not started'}, ${status || 'not recorded'}`}>{content}</button>;
       })}</div></section>;
     })}
+    </div>
     <p className="routine-footnote">{plan.duration} days is a planning window, not a promise of habit formation. Missed days and lapses remain visible; future days cannot be marked early.</p>
   </div>;
 }
+
