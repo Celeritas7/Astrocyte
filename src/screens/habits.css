@@ -44,3 +44,23 @@
  .minimal-checklist .calendar-mark{width:7mm;height:7mm}
  .minimal-checklist .calendar-writing-space{min-height:8mm}
 }
+
+/* Paper counterpart of the dashboard: decorative artwork, writable controls. */
+.screen-sheet-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;border:1.5px solid #426c60;border-left:6px solid #426c60;border-radius:12px;padding:14px 20px;color:#173c36;background:#eef7f2;margin-bottom:10px}
+.screen-sheet-heading>div{flex:1;min-width:0}.screen-sheet-kicker{font-size:9px;letter-spacing:.15em;font-weight:700}.screen-sheet-heading h1{font-size:26px;font-weight:750;margin:5px 0;line-height:1.2}.screen-sheet-heading p{font-size:11px;margin:4px 0}.screen-sheet-heading svg{width:110px;height:82px;flex-shrink:0}
+.screen-sheet-cues{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #b8cdc3;padding:0 0 10px;margin-bottom:12px;font-size:11px;color:#173c36}
+.screen-sheet-cues b{display:inline-grid;place-items:center;border:1px solid #426c60;border-radius:50%;width:22px;height:22px;margin-right:6px;font-size:10px}
+.habit-paper:has(.screen-sheet-heading) .calendar-weekday{background:#e7f1ec;color:#173c36}
+.habit-paper:has(.screen-sheet-heading) .calendar-mark{border:2px solid #426c60;border-radius:5px}
+@media print{
+ .screen-sheet-heading{padding:2mm 4mm;gap:4mm;margin-bottom:2mm;border-radius:3mm;break-inside:avoid}
+ .screen-sheet-heading h1{font-size:18px;margin:1mm 0}
+ .screen-sheet-heading svg{width:23mm;height:17mm}
+ .screen-sheet-heading p{font-size:9px;margin:1mm 0}
+ .screen-sheet-kicker{font-size:8px}
+ .screen-sheet-cues{padding-bottom:2mm;margin-bottom:2mm;font-size:9px;break-inside:avoid}
+ .screen-sheet-cues b{width:5mm;height:5mm;font-size:8px}
+ .minimal-checklist.orientation-landscape .habit-paper:has(.screen-sheet-heading) .calendar-date{min-height:21mm}
+ .minimal-checklist.orientation-portrait .habit-paper:has(.screen-sheet-heading) .calendar-date{min-height:30mm}
+}
+@media screen and (max-width:500px){.screen-sheet-heading{padding:10px;gap:10px}.screen-sheet-heading h1{font-size:20px}.screen-sheet-heading svg{width:70px;height:60px}.screen-sheet-cues{font-size:9px;gap:5px}.screen-sheet-cues b{display:block;margin-bottom:4px}}
