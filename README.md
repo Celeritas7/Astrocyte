@@ -77,3 +77,11 @@ Habits now supports real local habits alongside the original demo (under **Origi
 - Data and print preferences use `astrocyte.habits.v1` in localStorage. Existing demo calendar data is untouched. There is no cloud sync; export a JSON backup before changing browsers or clearing data. Backups contain private details.
 
 Validation: `npm run typecheck`, `npm run build`, `npm run test:habits`. The DOM tests cover local persistence, remounting, creation, making/breaking outcomes and printable privacy. Physical mobile and print-layout checks remain necessary.
+
+### Visual program format
+
+The Program view follows the weekly day-card format of Dojo: start date, 7/14/21/28-day planning windows, optional weekday scheduling, progress strip and weekly completion counts. Select an eligible card to open its check-in. Future dates cannot be marked via the program. Changing the window never deletes dated records. Rest/away days are not successful actions; partial, missed and lapse outcomes are not counted as completed actions.
+
+`src/components/HabitPlan.tsx` is the reusable Astrocyte-owned format. It receives a plan, title, action, dated outcomes and an optional selection callback; it owns no storage or app-specific data. `planDays` expands calendar days using local noon to avoid daylight-saving midnight shifts. A future Dojo integration can adapt its plan data to these props; no Dojo changes or live integration are included here.
+
+Paper sheets offer **Weekly day cards** (the program window) or **Monthly table**. Both use the same confidential-label controls. Responsive screen grids use seven columns on desktop, four on tablet and three on phones; print returns to seven columns. Longer action text can increase page count. These are planning periods, not claims about how long habit formation takes.
