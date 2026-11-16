@@ -33,11 +33,15 @@ await click('+ Break a habit');await click('Lapse');let data=JSON.parse(localSto
 await act(()=>root.unmount());const second=createRoot(document.getElementById('root'));await act(()=>second.render(React.createElement(Habits)));assert.ok(document.querySelector('button.selected').textContent.includes('Full'));await act(()=>second.unmount());
 assert.throws(()=>parseHabits({habits:[{id:'invalid'}]}));
 const third=createRoot(document.getElementById('root'));await act(()=>third.render(React.createElement(Habits)));
-const setup={habits:[{...data.habits[0],id:'import-test',name:'Imported routine',issue:'A subtle cue is easy to miss.',office:true,entries:{}}],labels:{app:'Custom app',team:'Private label'}};
+const setup={habits:[{...data.habits[0],id:'import-test',name:'Imported routine',issue:'A subtle cue is easy to miss.',action:'Confirm the daily action.',office:true,entries:{}}],labels:{app:'Custom app',team:'Private label'}};
 const fileInput=document.querySelector('input[type=file]');
 Object.defineProperty(fileInput,'files',{value:[{size:500,text:async()=>JSON.stringify(setup)}],configurable:true});
 await act(async()=>fileInput.dispatchEvent(new Event('change',{bubbles:true})));
 assert.ok(document.body.textContent.includes('Imported routine'));
+await click('Program');
+assert.equal(document.querySelectorAll('.routine-day .routine-action').length,0);
+assert.equal(document.querySelector('.routine-plan').textContent.split('Confirm the daily action.').length-1,1);
+assert.ok([...document.querySelectorAll('.routine-day')].every(e=>!e.textContent.includes('Confirm the daily action.')));
 await click('Screen off confirmed');
 await click('Preview printable sheet');
 assert.ok(document.querySelector('.habit-paper').textContent.includes('Custom app'));
