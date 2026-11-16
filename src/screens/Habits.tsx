@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { HabitExamples } from './HabitExamples';
 import './habits.css';
+import { HabitCalendar } from '../components/HabitCalendar';
 import { HabitPlan, type Plan } from '../components/HabitPlan';
 
 type Entry = { status: string; early: string; note: string };
@@ -44,7 +45,7 @@ export function Habits() {
   const [error, setError] = useState('');
   const [editing, setEditing] = useState(false);
   const [view, setView] = useState<'plan' | 'check' | 'print'>('plan');
-  const [printLayout, setPrintLayout] = useState<'cards' | 'table'>('cards');
+  const [printLayout, setPrintLayout] = useState<'cards' | 'table' | 'calendar'>('calendar');
   const habit = data.habits.find(h => h.id === selected) ?? data.habits[0];
   const plan: Plan = habit.plan ?? {start:'',duration:21,weekdaysOnly:habit.office};
   const entry = habit.entries[date] ?? { status: '', early: '', note: '' };
@@ -97,10 +98,10 @@ export function Habits() {
     <section hidden={view !== 'print'} className="habit-card"><h2>Paper sheet</h2><p className="habit-muted">Print a blank tracker or include saved check-ins. Private names are off by default.</p>
       <label className="habit-field">App label<input maxLength={100} value={data.labels.app} onChange={e => setData(d => ({...d, labels: {...d.labels, app: e.target.value}}))}/></label>
       <label className="habit-field">Team label (optional)<input maxLength={100} value={data.labels.team} onChange={e => setData(d => ({...d, labels: {...d.labels, team: e.target.value}}))}/></label>
-      <label className="habit-field">Sheet format<select value={printLayout} onChange={e=>setPrintLayout(e.target.value as 'cards'|'table')}><option value="cards">Weekly day cards</option><option value="table">Monthly table</option></select></label>
+      <label className="habit-field">Sheet format<select value={printLayout} onChange={e=>setPrintLayout(e.target.value as 'cards'|'table'|'calendar')}><option value="calendar">Monthly checkmark calendar</option><option value="cards">Weekly day cards</option><option value="table">Monthly table</option></select></label>
       {printLayout === 'cards' && <p className="habit-muted">Uses the program start date and length. Set them in Program first, or print undated cards.</p>}
-      <label className="habit-field">Month (monthly table)<input type="month" value={month} onChange={e => { if(e.target.value) setMonth(e.target.value); }}/></label>
-      {([['app','Include app label'],['team','Include team label'],['realName','Print real habit name (otherwise use alias)'],['details','Print issue, trigger, action and suggestion'],['notes','Print saved personal notes']] as const).map(([key,label]) => <label className="habit-check" key={key}><input type="checkbox" checked={p[key]} onChange={e => setData(d => ({ ...d, privacy: {...d.privacy, [key]: e.target.checked} }))}/>{label}</label>)}
+      <label className="habit-field">Month (calendar or table)<input type="month" value={month} onChange={e => { if(e.target.value) setMonth(e.target.value); }}/></label>
+      {([['app','Include app label'],['team','Include team label'],['realName','Print real habit name (otherwise use alias)'],['details','Print issue as title, trigger, action and suggestion'],['notes','Print saved personal notes']] as const).map(([key,label]) => <label className="habit-check" key={key}><input type="checkbox" checked={p[key]} onChange={e => setData(d => ({ ...d, privacy: {...d.privacy, [key]: e.target.checked} }))}/>{label}</label>)}
       <label className="habit-check"><input type="checkbox" checked={filled} onChange={e => setFilled(e.target.checked)}/>Include recorded check-ins</label>
       <button className="habit-primary" onClick={() => setPreview(true)}>Preview printable sheet</button>
     </section>
@@ -108,10 +109,10 @@ export function Habits() {
     <p className="habit-muted">Habits are stored in this browser only. No cloud sync or timed notifications yet.</p><button onClick={backup}>Export backup (includes private details)</button>
     <details className="habit-card"><summary>Original demo habits</summary><p>Sample data; separate from your habits above.</p><HabitExamples/></details>
     {preview && createPortal(<div className="habit-print-overlay" role="dialog" aria-modal="true" aria-label="Print preview"><div className="habit-print-toolbar"><button autoFocus onClick={() => setPreview(false)}>Close preview</button><button onClick={() => window.print()}>Print / Save as PDF</button><p>Turn off browser headers and footers in the print dialog to omit the site URL. Review any sensitive wording in the sheet below.</p></div>
-      <article className="habit-paper">{(p.app || p.team) && <div className="paper-brand">{[p.app && data.labels.app, p.team && data.labels.team].filter(Boolean).join(' · ')}</div>}<div className="paper-kicker">{habit.kind === 'making' ? 'Habit making' : 'Habit breaking'} · {month}</div><h1>{(p.realName ? habit.name : habit.alias) || 'Routine sheet'}</h1>
-      {p.details && <div className="paper-plan"><p><b>Issue:</b> {habit.issue}</p><p><b>Trigger:</b> {habit.trigger}</p><p><b>{habit.kind === 'breaking' ? 'Replacement' : 'Action'}:</b> {habit.action}</p><p><b>Suggestion:</b> {habit.suggestion}</p></div>}
+      <article className="habit-paper">{(p.app || p.team) && <div className="paper-brand">{[p.app && data.labels.app, p.team && data.labels.team].filter(Boolean).join(' · ')}</div>}<div className="paper-kicker">{habit.kind === 'making' ? 'Habit making' : 'Habit breaking'} · {month}</div><h1>{(p.details && habit.issue.trim()) || (p.realName ? habit.name : habit.alias) || 'Routine sheet'}</h1>
+      {p.details && <div className="paper-plan"><p><b>Trigger:</b> {habit.trigger}</p><p><b>{habit.kind === 'breaking' ? 'Replacement' : 'Action'}:</b> {habit.action}</p><p><b>Suggestion:</b> {habit.suggestion}</p></div>}
       <p className="paper-legend">{statuses(habit).map((s,i) => `${i+1} = ${s}`).join(' · ')}<br/>Blank = not recorded. Rest / not applicable is not a missed day.</p>
-      {printLayout === 'cards' ? <HabitPlan printable plan={plan} title="Daily plan" action={p.details ? habit.action : ''} kind={habit.kind} entries={filled ? habit.entries : {}} today={today()}/> : <table><thead><tr><th>Date</th><th>Outcome / code</th>{habit.office && <th>30-min check*</th>}<th>Notes</th></tr></thead><tbody>{Array.from({length:days},(_,i) => {const d = `${month}-${String(i+1).padStart(2,'0')}`; const e = filled ? habit.entries[d] : undefined; return <tr key={d}><td>{d}</td><td>{e?.status}</td>{habit.office && <td>{e?.early}</td>}<td>{p.notes ? e?.note : ''}</td></tr>;})}</tbody></table>}
+      {printLayout === 'calendar' ? <HabitCalendar month={month} entries={filled ? habit.entries : {}} notes={p.notes}/> : printLayout === 'cards' ? <HabitPlan printable plan={plan} title="Daily plan" action={p.details ? habit.action : ''} kind={habit.kind} entries={filled ? habit.entries : {}} today={today()}/> : <table><thead><tr><th>Date</th><th>Outcome / code</th>{habit.office && <th>30-min check*</th>}<th>Notes</th></tr></thead><tbody>{Array.from({length:days},(_,i) => {const d = `${month}-${String(i+1).padStart(2,'0')}`; const e = filled ? habit.entries[d] : undefined; return <tr key={d}><td>{d}</td><td>{e?.status}</td>{habit.office && <td>{e?.early}</td>}<td>{p.notes ? e?.note : ''}</td></tr>;})}</tbody></table>}
       {habit.office && <p className="paper-legend">* Early / Work still needs screen / N/A. Turning the screen off when work ends remains the main check.</p>}
       <div className="paper-review"><b>Review:</b> What helped? What got missed? What will I adjust?<div>________________________________________________________________</div></div>
       </article></div>, document.body)}
