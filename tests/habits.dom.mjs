@@ -20,6 +20,13 @@ await click('Print sheet');
 const format=[...document.querySelectorAll('label')].find(e=>e.textContent.startsWith('Sheet format')).querySelector('select');
 await act(()=>{format.value='table';format.dispatchEvent(new Event('change',{bubbles:true}));});
 await click('Preview printable sheet');
+assert.ok(document.querySelector('.orientation-landscape'));
+assert.ok(document.querySelector('.habit-print-overlay style').textContent.includes('size: A4 landscape'));
+const orientationSelect=document.querySelector('.habit-print-toolbar select');
+await act(()=>{orientationSelect.value='portrait';orientationSelect.dispatchEvent(new Event('change',{bubbles:true}));});
+assert.ok(document.querySelector('.orientation-portrait'));
+assert.ok(document.querySelector('.habit-print-overlay style').textContent.includes('size: A4 portrait'));
+await act(()=>{orientationSelect.value='landscape';orientationSelect.dispatchEvent(new Event('change',{bubbles:true}));});
 let sheet=document.querySelector('.habit-paper');assert.ok(!sheet.textContent.includes('Astrocyte'));assert.ok(!sheet.textContent.includes('Private label'));assert.ok(sheet.textContent.includes('Routine A'));assert.equal(sheet.querySelectorAll('tbody tr').length,new Date(new Date().getFullYear(),new Date().getMonth()+1,0).getDate());assert.equal(document.title,'Routine sheet');
 await click('Close preview');
 await act(()=>{format.value='cards';format.dispatchEvent(new Event('change',{bubbles:true}));});
@@ -56,3 +63,4 @@ assert.equal(JSON.parse(localStorage.getItem('astrocyte.habits.v1')).habits.leng
 await act(()=>third.unmount());
 await unlink('tests/.habits-test.mjs');
 console.log('PASS: local persistence and remount, real habit creation, making/breaking outcomes, default print privacy, opt-in branding, month rows and neutral document title.');
+
