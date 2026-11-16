@@ -46,6 +46,13 @@ Object.defineProperty(fileInput,'files',{value:[{size:500,text:async()=>JSON.str
 await act(async()=>fileInput.dispatchEvent(new Event('change',{bubbles:true})));
 assert.ok(document.body.textContent.includes('Imported routine'));
 await click('Program');
+assert.ok(document.querySelector('.screen-ritual'));
+await act(()=>document.querySelector('.ritual-confirm').click());
+assert.ok(document.querySelector('.ritual-done'));
+assert.ok(JSON.parse(localStorage.getItem('astrocyte.habits.v1')).habits.find(h=>h.id==='import-test').entries);
+await click('Undo');assert.ok(!document.querySelector('.ritual-done'));
+await click('Not at office today');assert.ok(document.querySelector('.ritual-away').getAttribute('aria-pressed')==='true');
+await click('Mark as office day');
 assert.equal(document.querySelectorAll('.routine-day .routine-action').length,0);
 assert.equal(document.querySelector('.routine-plan').textContent.split('Confirm the daily action.').length-1,1);
 assert.ok([...document.querySelectorAll('.routine-day')].every(e=>!e.textContent.includes('Confirm the daily action.')));
