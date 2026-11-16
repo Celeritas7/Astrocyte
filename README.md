@@ -84,4 +84,7 @@ The Program view follows the weekly day-card format of Dojo: start date, 7/14/21
 
 `src/components/HabitPlan.tsx` is the reusable Astrocyte-owned format. It receives a plan, title, action, dated outcomes and an optional selection callback; it owns no storage or app-specific data. `planDays` expands calendar days using local noon to avoid daylight-saving midnight shifts. A future Dojo integration can adapt its plan data to these props; no Dojo changes or live integration are included here.
 
-Paper sheets offer **Weekly day cards** (the program window) or **Monthly table**. Both use the same confidential-label controls. Responsive screen grids use seven columns on desktop, four on tablet and three on phones; print returns to seven columns. Longer action text can increase page count. These are planning periods, not claims about how long habit formation takes.
+Paper sheets offer **Weekly day cards** (the program window) or **Monthly table**. Both use the same confidential-label controls. Program and weekly print grids use fixed Monday–Sunday columns, with blank cells outside the date span. Narrow screens scroll each calendar horizontally rather than wrapping weekdays. Longer action text can increase page count. These are planning periods, not claims about how long habit formation takes.
+
+
+Calendar alignment regression: `node tests/calendar-alignment.mjs` covers every starting weekday, supported duration, leap dates and month/year boundaries. A partial first or last calendar week does not add days to the plan or modify check-ins.
