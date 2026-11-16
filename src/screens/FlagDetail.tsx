@@ -1,4 +1,5 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import { load, save } from '../lib/store';
 import type { Challenge, Evidence, Flag } from '../types';
 import { OutcomeStrip, Screen, SegMeter } from '../components/ui';
 import { DendriteField } from '../components/Neural';
@@ -133,3 +134,4 @@ export function FlagDetail({ flag, challenge, onBack, onChallenge }: {
     </Screen>
   );
 }
+

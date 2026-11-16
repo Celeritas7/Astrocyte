@@ -63,3 +63,17 @@ Every motion effect is driven by data. Raster density shows pattern strength, ed
 2. **Phase 2: Supabase.** Add `@supabase/supabase-js` and copy `.env.example` to `.env.local`. Add auth for a single user (magic link). Tables `log_entries`, `challenges`, `habit_days`, `budget_spends`, with the Log screen writing real rows first. Replace `lib/store.ts` calls and `data/mock.ts` reads.
 3. **Phase 3: Judgements.** Read location, mood, weather and health from the shared data layer. Compute F1–F5 strengths, confidence and evidence (e.g. a Supabase Edge Function on a schedule). Write flags and verdicts. Calculate the track record from resolved flags.
 4. **Phase 4: Android.** Run `npm i @capacitor/core @capacitor/cli @capacitor/android`, then `npx cap init astrocyte <app.id>` and `npx cap add android`. Native location and health permissions come in here.
+
+
+## Personal habits and printable sheets
+
+Habits now supports real local habits alongside the original demo (under **Original demo habits**). Personal setup is imported from a local JSON file, keeping private habit wording and team names out of public source. Imported screen-check habits can use specialized confirmation controls. The app does not control hardware or issue scheduled notifications.
+
+- Import setup or backup JSON without overwriting matching habit IDs; app/team labels are editable locally. Print inclusion choices are preserved when importing.
+- Add making or breaking habits; edit their issue, trigger, action, suggestion and printable alias.
+- Record dated outcomes, optional notes, and the office habit's early-stop/work-needed response. Select a past date or history entry to correct it. Blank dates are unreported.
+- Preview a blank monthly sheet or include recorded check-ins, then use **Print / Save as PDF**. App/team names and the real habit name are excluded by default. Personal notes are excluded separately. Issue/action text is included by default; turn off details if it contains private wording.
+- Disable browser print headers/footers to omit its URL. The preview uses a neutral document title. Print privacy is not encryption or a public-repository privacy feature.
+- Data and print preferences use `astrocyte.habits.v1` in localStorage. Existing demo calendar data is untouched. There is no cloud sync; export a JSON backup before changing browsers or clearing data. Backups contain private details.
+
+Validation: `npm run typecheck`, `npm run build`, `npm run test:habits`. The DOM tests cover local persistence, remounting, creation, making/breaking outcomes and printable privacy. Physical mobile and print-layout checks remain necessary.
