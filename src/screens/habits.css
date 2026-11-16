@@ -10,3 +10,21 @@
 /* Seven calendar columns stay fixed; narrow screens scroll the week. */
 .routine-calendar-scroll{overflow-x:auto;padding:2px 3px 8px}.routine-calendar-scroll .routine-week{min-width:630px}.routine-calendar-scroll .routine-grid{grid-template-columns:repeat(7,minmax(0,1fr))}.routine-weekday{text-align:center;font-size:12px;font-weight:700;padding:7px 0;color:#53698b}.routine-placeholder{min-height:110px;border:1px dashed #d5ddeb;border-radius:12px;background:#f0f3f7}.routine-calendar-scroll .routine-day{min-height:150px}.routine-calendar-scroll .routine-week header{position:sticky;left:0}@media print{.routine-calendar-scroll{overflow:visible;padding:0}.routine-calendar-scroll .routine-week{min-width:0}.routine-calendar-scroll .routine-day,.routine-placeholder{min-height:100px}.routine-weekday{font-size:9px;padding:3px 0}}
 
+
+/* The selected orientation controls both preview geometry and printed page size. */
+.orientation-landscape .habit-paper{max-width:1123px;min-height:794px}
+.orientation-portrait .habit-paper{max-width:794px;min-height:1123px}
+.orientation-landscape .habit-print-toolbar{max-width:1123px}
+.habit-print-toolbar label{display:flex;align-items:center;gap:8px}
+.habit-print-toolbar select{background:white;color:#17171c;border:1px solid #555064;border-radius:6px;padding:10px;min-height:44px}
+.orientation-landscape .calendar-date{min-height:64px}
+.orientation-landscape .calendar-writing-space{min-height:18px}
+@media print {
+  .orientation-landscape .habit-paper,.orientation-portrait .habit-paper{max-width:none;min-height:0}
+  .orientation-landscape .calendar-date{min-height:17mm;padding:1.5mm}
+  .orientation-landscape .calendar-writing-space{min-height:5mm}
+  .orientation-landscape .print-calendar h2{margin-top:8px}
+  .orientation-landscape .print-calendar>p{margin-bottom:6px}
+  .orientation-landscape .paper-review{margin-top:8px}
+  .orientation-landscape .routine-calendar-scroll .routine-day,.orientation-landscape .routine-placeholder{min-height:24mm}
+}
