@@ -89,3 +89,25 @@
  .two-up .habit-paper{break-inside:avoid}
  .two-up.minimal-checklist.orientation-portrait .habit-paper .calendar-date{min-height:0;height:auto}
 }
+
+/* Program numbers lead; real dates keep Monday–Sunday alignment. */
+.routine-placeholder{display:flex;align-items:flex-start;padding:12px 10px;background:#f4f5f7}
+.routine-placeholder .routine-date{color:#a5abb5}
+.routine-print .routine-day.rest{background:#edf1f7}
+.routine-print .routine-footnote{font-size:8px}
+.two-up .habit-paper>.routine-print{flex:1;min-height:0;display:flex;flex-direction:column}
+.two-up .routine-print .routine-heading{margin:0 0 1mm}
+.two-up .routine-print .routine-heading h2{font-size:12px;margin:0}
+.two-up .routine-print .routine-heading p{font-size:9px;margin:0}
+.two-up .routine-print .routine-kicker,.two-up .routine-print .routine-track,.two-up .routine-print .routine-footnote{display:none}
+.two-up .routine-print .routine-calendar-scroll{flex:1;min-height:0;display:flex;flex-direction:column;overflow:visible;padding:0}
+.two-up .routine-print .routine-week{flex:1;min-height:0;min-width:0;margin:0 0 1mm;display:flex;flex-direction:column}
+.two-up .routine-print .routine-week header{display:none}
+.two-up .routine-print .routine-grid{flex:1;min-height:0;grid-template-rows:auto minmax(0,1fr);gap:1mm}
+.two-up .routine-print .routine-day,.two-up .routine-print .routine-placeholder{min-height:0;padding:1mm 2mm 5mm;border-radius:2mm;gap:0}
+.two-up .routine-print .routine-number{font-size:20px}
+.two-up .routine-print .routine-date{font-size:8px}
+.two-up .routine-print .routine-weekday{font-size:8px;padding:0}
+.two-up .routine-print .routine-outcome{font-size:7px;padding:0}
+.two-up .routine-print .routine-circle{width:4mm;height:4mm;right:1mm;bottom:1mm}
+.two-up .routine-print .routine-count{font-size:10px}

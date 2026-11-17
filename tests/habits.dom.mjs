@@ -57,6 +57,8 @@ assert.equal(document.querySelectorAll('.routine-day .routine-action').length,0)
 assert.equal(document.querySelector('.routine-plan').textContent.split('Confirm the daily action.').length-1,1);
 assert.ok([...document.querySelectorAll('.routine-day')].every(e=>!e.textContent.includes('Confirm the daily action.')));
 await click('Screen off confirmed');
+const sheetFormat=[...document.querySelectorAll('label')].find(e=>e.textContent.startsWith('Sheet format')).querySelector('select');
+await act(()=>{sheetFormat.value='calendar';sheetFormat.dispatchEvent(new Event('change',{bubbles:true}));});
 await click('Preview printable sheet');
 assert.ok(document.querySelector('.habit-paper').textContent.includes('Custom app'));
 assert.ok(!document.querySelector('.habit-paper').textContent.includes('Private label'));

@@ -27,17 +27,22 @@ export function HabitPlan({plan, title, action, kind, entries, today, onSelect, 
   const complete = (d: PlanDay) => !!plan.start && d.active && successes.has(entries[d.date]?.status);
   const done = active.filter(complete).length;
   return <div className={`routine-plan${printable ? ' routine-print' : ''}`}>
-    <div className="routine-heading"><div><div className="routine-kicker">{kind === 'making' ? 'MAKE A HABIT' : 'BREAK A HABIT'}</div><h2>{title}</h2><p>{plan.start ? `${plan.start} → ${days[days.length-1]?.date}` : 'Not started yet. Choose a start date to begin.'}</p></div><span className="routine-count">{done}/{active.length} done</span></div>
+    <div className="routine-heading"><div><div className="routine-kicker">{kind === 'making' ? 'MAKE A HABIT' : 'BREAK A HABIT'}</div><h2>{printable ? `${plan.duration}-day program` : title}</h2><p>{plan.start ? `${plan.start} → ${days[days.length-1]?.date}` : 'Not started yet. Choose a start date to begin.'}</p></div><span className="routine-count">{done}/{active.length} done</span></div>
     {!printable && action && <p className="routine-guidance">{action}</p>}
     <div className="routine-track" role="progressbar" aria-label="Completed planned days" aria-valuenow={done} aria-valuemin={0} aria-valuemax={active.length || 1}>{days.map(d => <span key={d.number} className={complete(d) ? 'complete' : !d.active ? 'off' : ''}/>)}<b>{done}/{active.length}</b></div>
     <div className="routine-calendar-scroll">
     {planWeeks(plan).map((week,w) => {
-      const available=week.filter((d): d is PlanDay => d !== null && active.includes(d));
+      const available=week.filter((d): d is PlanDay => d !== null && active.some(a => a.date === d.date));
       return <section className="routine-week" key={w} aria-label={`Week ${w+1}`}><header><h3>Calendar week {w+1}</h3><b>{available.filter(complete).length}/{available.length} done</b></header><div className="routine-grid">{WEEKDAYS.map(day=><div className="routine-weekday" key={day}>{day}</div>)}{week.map((d,column) => {
-        if (!d) return <div key={`empty-${column}`} className="routine-placeholder" aria-hidden="true"/>;
+        if (!d) {
+          const first = days[0].date.split('-').map(Number);
+          const offset = (new Date(first[0], first[1]-1, first[2], 12).getDay()+6)%7;
+          const outside = new Date(first[0], first[1]-1, first[2]+w*7+column-offset,12);
+          return <div key={`empty-${column}`} className="routine-placeholder"><span className="routine-date">{plan.start ? outside.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : ''}</span></div>;
+        }
         const status = plan.start ? entries[d.date]?.status : '';
         const future = !!plan.start && d.date > today;
-        const content = <><strong className="routine-number">{String(d.number).padStart(2,'0')}</strong><span className="routine-date">{plan.start ? d.date.slice(5) : 'Day '+d.number}</span><span className="routine-outcome">{status || (!d.active ? 'Rest' : future ? 'Upcoming' : plan.start ? 'Not recorded' : 'Not started')}</span><span aria-hidden="true" className={`routine-circle${complete(d) ? ' checked' : ''}`}>{complete(d) ? '✓' : status === 'Lapse' || status === 'Missed' ? '–' : ''}</span></>;
+        const content = <><strong className="routine-number">{String(d.number).padStart(2,'0')}</strong><span className="routine-date">{plan.start ? new Date(d.date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : 'Day '+d.number}</span><span className="routine-outcome">{status || (!d.active ? 'Rest' : printable ? '' : future ? 'Upcoming' : plan.start ? 'Not recorded' : 'Not started')}</span>{d.active && <span aria-hidden="true" className={`routine-circle${complete(d) ? ' checked' : ''}`}>{complete(d) ? '✓' : status === 'Lapse' || status === 'Missed' ? '–' : ''}</span>}</>;
         const cls=`routine-day${d.active ? '' : ' rest'}${complete(d) ? ' done' : ''}${plan.start && d.date === today ? ' is-today' : ''}`;
         return printable ? <div className={cls} key={d.number}>{content}</div> : <button type="button" className={cls} key={d.number} disabled={!plan.start || future} onClick={()=>onSelect?.(d.date)} aria-label={`Day ${d.number}, ${plan.start ? d.date : 'not started'}, ${status || 'not recorded'}`}>{content}</button>;
       })}</div></section>;

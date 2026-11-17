@@ -20,5 +20,12 @@ for(const start of ['2026-11-16','2026-11-17','2026-11-18','2026-11-19','2026-11
 }
 const tuesday=planWeeks({start:'2026-11-17',duration:21,weekdaysOnly:true});
 assert.equal(tuesday[0][0],null);assert.equal(tuesday[0][5].date,'2026-11-21');assert.equal(tuesday[0][6].date,'2026-11-22');assert.equal(tuesday.length,4);
+const preview=renderToStaticMarkup(React.createElement(HabitPlan,{plan:{start:'2026-11-17',duration:21,weekdaysOnly:true},title:'Test',action:'',kind:'making',entries:{},today:'2026-11-17',printable:true}));
+assert.ok(preview.includes('16 Nov'));
+assert.ok(preview.includes('13 Dec'));
+assert.equal((preview.match(/class="routine-number"/g)||[]).length,21);
+assert.equal((preview.match(/class="routine-circle/g)||[]).length,15);
+assert.ok(preview.includes('21-day program'));
+assert.ok(preview.includes('0/4 done'));
 await unlink('tests/.calendar-check.mjs');
 console.log('PASS: weekday alignment, all start weekdays, all lengths, month/year/leap boundaries, screen and print headings.');
