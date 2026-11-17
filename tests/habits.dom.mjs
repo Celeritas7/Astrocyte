@@ -6,7 +6,7 @@ for (const k of ['window','document','localStorage','HTMLElement','Event','Mouse
 globalThis.IS_REACT_ACT_ENVIRONMENT=true;
 await build({entryPoints:['src/screens/Habits.tsx'],outfile:'tests/.habits-test.mjs',bundle:true,platform:'node',format:'esm',packages:'external',loader:{'.css':'empty'}});
 const { unlink } = await import('node:fs/promises');
-const React=await import('react');const {createRoot}=await import('react-dom/client');const {Habits,parseHabits}=await import('./.habits-test.mjs');const {act}=React;
+const React=await import('react');const {createRoot}=await import('react-dom/client');const {Habits,parseHabits,sheetMonth}=await import('./.habits-test.mjs');const {act}=React;
 const root=createRoot(document.getElementById('root'));
 const click=async text=>{const el=[...document.querySelectorAll('button')].find(e=>e.textContent===text);assert.ok(el,text);await act(()=>el.click());};
 await act(()=>root.render(React.createElement(Habits)));
@@ -79,6 +79,11 @@ assert.ok([...document.querySelectorAll('.habit-paper .calendar-mark')].every(e=
 const twoToggle=[...document.querySelectorAll('.habit-print-toolbar label')].find(e=>e.textContent==='2 sheets on one A4').querySelector('input');
 await act(()=>twoToggle.click());
 assert.equal(document.querySelectorAll('.habit-paper').length,2);
+assert.equal(sheetMonth('2026-11',0),'2026-11');
+assert.equal(sheetMonth('2026-11',1),'2026-12');
+assert.equal(sheetMonth('2026-12',1),'2027-01');
+const startMonth=document.querySelector('input[type=month]').value;
+assert.deepEqual([...document.querySelectorAll('.habit-paper .print-calendar')].map(e=>e.getAttribute('aria-label')), [`Checkmark calendar ${startMonth}`,`Checkmark calendar ${sheetMonth(startMonth,1)}`]);
 assert.ok(document.querySelector('.two-up.orientation-portrait.minimal-checklist'));
 assert.ok(document.querySelector('.habit-print-overlay style').textContent.includes('size: A4 portrait; margin: 8mm'));
 assert.ok([...document.querySelectorAll('.habit-paper')].every(e=>!e.textContent.includes('Private label') && !e.querySelector('.paper-plan')));
