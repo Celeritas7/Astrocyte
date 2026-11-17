@@ -25,7 +25,7 @@ assert.ok(preview.includes('16 Nov'));
 assert.ok(preview.includes('13 Dec'));
 assert.equal((preview.match(/class="routine-number"/g)||[]).length,21);
 assert.equal((preview.match(/class="routine-circle/g)||[]).length,15);
-assert.ok(preview.includes('21-day program'));
+assert.ok(preview.includes('21-day routine'));
 assert.ok(preview.includes('0/4 done'));
 await unlink('tests/.calendar-check.mjs');
 console.log('PASS: weekday alignment, all start weekdays, all lengths, month/year/leap boundaries, screen and print headings.');
