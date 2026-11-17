@@ -64,3 +64,25 @@
  .minimal-checklist.orientation-portrait .habit-paper:has(.screen-sheet-heading) .calendar-date{min-height:30mm}
 }
 @media screen and (max-width:500px){.screen-sheet-heading{padding:10px;gap:10px}.screen-sheet-heading h1{font-size:20px}.screen-sheet-heading svg{width:70px;height:60px}.screen-sheet-cues{font-size:9px;gap:5px}.screen-sheet-cues b{display:block;margin-bottom:4px}}
+
+/* Two writable landscape calendars imposed on one portrait A4 sheet. */
+.two-up .habit-paper-stack{width:194mm;max-width:none;margin:auto;background:white}
+.two-up .habit-paper{box-sizing:border-box;width:194mm;height:138mm;min-height:0;max-width:none;padding:4mm;font-size:9px}
+.two-up .habit-paper+ .habit-paper{border-top:1px dashed #8f96a2}
+.two-up .screen-sheet-heading{padding:2mm 3mm;margin-bottom:2mm;border-radius:2mm;gap:2mm}
+.two-up .screen-sheet-heading h1,.two-up .habit-paper>h1{font-size:14px;line-height:1.2;margin:1mm 0}
+.two-up .screen-sheet-kicker{font-size:8px}
+.two-up .screen-sheet-cues{font-size:8px;margin-bottom:2mm;padding-bottom:1mm;gap:2mm}
+.two-up .screen-sheet-cues b{display:inline-grid;width:4mm;height:4mm;font-size:7px;margin-right:1mm}
+.two-up .print-calendar h2{font-size:12px;margin:0 0 2mm}
+.two-up .calendar-weekday{padding:1mm;font-size:9px}
+.two-up .print-calendar .calendar-date{box-sizing:border-box;min-height:14mm;height:14mm;padding:1mm;gap:1mm}
+.two-up .calendar-date>strong{font-size:11px}
+.two-up .calendar-mark{box-sizing:border-box;width:5mm;height:5mm;font-size:11px}
+.two-up .calendar-writing-space{display:none}
+.two-up .paper-brand{font-size:8px}
+@media print{
+ .two-up .habit-paper-stack{break-inside:avoid}
+ .two-up .habit-paper{break-inside:avoid}
+ .two-up.minimal-checklist.orientation-portrait .habit-paper .calendar-date{min-height:14mm}
+}
