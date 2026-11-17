@@ -67,16 +67,19 @@
 
 /* Two writable landscape calendars imposed on one portrait A4 sheet. */
 .two-up .habit-paper-stack{width:194mm;max-width:none;margin:auto;background:white}
-.two-up .habit-paper{box-sizing:border-box;width:194mm;height:138mm;min-height:0;max-width:none;padding:4mm;font-size:9px}
+.two-up .habit-paper{box-sizing:border-box;width:194mm;height:140mm;min-height:0;max-width:none;padding:3mm;font-size:9px;display:flex;flex-direction:column}
 .two-up .habit-paper+ .habit-paper{border-top:1px dashed #8f96a2}
 .two-up .screen-sheet-heading{padding:2mm 3mm;margin-bottom:2mm;border-radius:2mm;gap:2mm}
 .two-up .screen-sheet-heading h1,.two-up .habit-paper>h1{font-size:14px;line-height:1.2;margin:1mm 0}
 .two-up .screen-sheet-kicker{font-size:8px}
 .two-up .screen-sheet-cues{font-size:8px;margin-bottom:2mm;padding-bottom:1mm;gap:2mm}
 .two-up .screen-sheet-cues b{display:inline-grid;width:4mm;height:4mm;font-size:7px;margin-right:1mm}
+.two-up .habit-paper> :not(.print-calendar){flex-shrink:0}
+.two-up .print-calendar{flex:1;min-height:0;display:flex;flex-direction:column}
+.two-up .print-calendar-grid{flex:1;min-height:0;grid-template-rows:auto;grid-auto-rows:minmax(0,1fr)}
 .two-up .print-calendar h2{font-size:12px;margin:0 0 2mm}
 .two-up .calendar-weekday{padding:1mm;font-size:9px}
-.two-up .print-calendar .calendar-date{box-sizing:border-box;min-height:14mm;height:14mm;padding:1mm;gap:1mm}
+.two-up .print-calendar .calendar-date{box-sizing:border-box;min-height:0;height:auto;padding:1mm;gap:1mm}
 .two-up .calendar-date>strong{font-size:11px}
 .two-up .calendar-mark{box-sizing:border-box;width:5mm;height:5mm;font-size:11px}
 .two-up .calendar-writing-space{display:none}
@@ -84,5 +87,5 @@
 @media print{
  .two-up .habit-paper-stack{break-inside:avoid}
  .two-up .habit-paper{break-inside:avoid}
- .two-up.minimal-checklist.orientation-portrait .habit-paper .calendar-date{min-height:14mm}
+ .two-up.minimal-checklist.orientation-portrait .habit-paper .calendar-date{min-height:0;height:auto}
 }
