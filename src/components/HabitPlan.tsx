@@ -27,7 +27,7 @@ export function HabitPlan({plan, title, action, kind, entries, today, onSelect, 
   const complete = (d: PlanDay) => !!plan.start && d.active && successes.has(entries[d.date]?.status);
   const done = active.filter(complete).length;
   return <div className={`routine-plan${printable ? ' routine-print' : ''}`}>
-    <div className="routine-heading"><div><div className="routine-kicker">{kind === 'making' ? 'MAKE A HABIT' : 'BREAK A HABIT'}</div><h2>{printable ? `${plan.duration}-day program` : title}</h2><p>{plan.start ? `${plan.start} → ${days[days.length-1]?.date}` : 'Not started yet. Choose a start date to begin.'}</p></div><span className="routine-count">{done}/{active.length} done</span></div>
+    <div className="routine-heading"><div><div className="routine-kicker">{kind === 'making' ? 'MAKE A HABIT' : 'BREAK A HABIT'}</div><h2>{printable ? `${plan.duration}-day routine` : title}</h2><p>{plan.start ? `${plan.start} → ${days[days.length-1]?.date}` : 'Not started yet. Choose a start date to begin.'}</p></div><span className="routine-count">{done}/{active.length} done</span></div>
     {!printable && action && <p className="routine-guidance">{action}</p>}
     <div className="routine-track" role="progressbar" aria-label="Completed planned days" aria-valuenow={done} aria-valuemin={0} aria-valuemax={active.length || 1}>{days.map(d => <span key={d.number} className={complete(d) ? 'complete' : !d.active ? 'off' : ''}/>)}<b>{done}/{active.length}</b></div>
     <div className="routine-calendar-scroll">
